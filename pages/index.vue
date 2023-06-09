@@ -8,14 +8,17 @@
 <script setup>
 import { useLocationinfoRest } from '~/stores/locationinfoRest';
 import Layout from '~/layouts/Layout.vue';
+import '~/assets/image/down_poi.png';
+import '~/assets/image/up_poi.png';
+import { useFilter } from '~/stores/Filter';
 
 const locationInfoRest = useLocationinfoRest();
+const filter = useFilter();
 const level = ref(10),
   map = ref(''),
   selectedMarker = ref(null),
   latitude = ref(37.5176947984203),
   longitude = ref(127.040753546649),
-  poi = ref([]),
   mapOverlay = ref('');
 
 const fn_clickMap = (mouseEvent) => {
@@ -46,7 +49,7 @@ const fn_mapOverlay = ({ title, text, latlng }) => {
 // 마커클릭
 const fn_clickMark = (marker, item) => {
   const { title, stdRestCd } = item;
-  locationInfoRest.GET_locationInfo(title, stdRestCd);
+  locationInfoRest.GET_locationInfo(item);
   selectedMarker.value = marker;
   const overlayCard = document.querySelector('#map_overlay_card');
   if (overlayCard) {
@@ -57,12 +60,27 @@ const fn_clickMark = (marker, item) => {
   }
 };
 
-const fn_poi = () => {
-  poi.value.forEach((item) => {
-    // 마커 이미지의 이미지 크기 입니다
-    const imageSize = new kakao.maps.Size(24, 35);
-    // 마커 이미지를 생성합니다
-    const markerImage = new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', imageSize);
+const fn_restPoi = () => {
+  let imageSize = new kakao.maps.Size(24, 35),
+    markerImage = new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', imageSize),
+    poiList = [];
+
+  switch (filter.getFilterDirection) {
+    case '0':
+      imageSize = new kakao.maps.Size(24, 30);
+      markerImage = new kakao.maps.MarkerImage(location.origin + '/_nuxt/assets/image/up_poi.png', imageSize);
+      poiList = locationInfoRest.getLocationinfoRestUp;
+      break;
+    case '1':
+      imageSize = new kakao.maps.Size(24, 30);
+      markerImage = new kakao.maps.MarkerImage(location.origin + '/_nuxt/assets/image/down_poi.png', imageSize);
+      poiList = locationInfoRest.getLocationinfoRestDown;
+      break;
+    case '2':
+      poiList = locationInfoRest.getLocationinfoRest;
+      break;
+  }
+  locationInfoRest.getLocationinfoRest.forEach((item) => {
     const marker = new kakao.maps.Marker({
       map: map.value, // 마커를 표시할 지도
       position: item.latlng, // 마커를 표시할 위치
@@ -82,27 +100,17 @@ const kakaoMap = async () => {
   };
   map.value = new kakao.maps.Map(mapContainer, mapOption);
 
-  fn_poi();
+  fn_restPoi();
 
   kakao.maps.event.addListener(map.value, 'click', fn_clickMap);
 };
 
+watch(filter, () => {
+  kakaoMap();
+});
+
 onMounted(async () => {
   await locationInfoRest.GET_LocationinfoRest();
-
-  poi.value = await locationInfoRest.getLocationinfoRest;
-  // [
-  //   {
-  //     title: 'metarock',
-  //     latlng: new kakao.maps.LatLng(37.5176947984203, 127.040753546649),
-  //     text: '메타록',
-  //   },
-  //   {
-  //     title: 'test',
-  //     latlng: new kakao.maps.LatLng(37.517, 127.04),
-  //     text: '테스트 입니다',
-  //   },
-  // ];
   kakaoMap();
 });
 </script>

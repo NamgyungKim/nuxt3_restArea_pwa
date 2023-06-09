@@ -17,6 +17,7 @@
           <q-skeleton width="350px" height="100px" />
         </div>
       </div>
+
       <div v-else>
         <div class="flex justify-between q-mb-md q-px-md q-py-sm" style="background: #258fff; color: #fff">
           <q-toolbar-title style="line-height: 40px">{{ locationInfoRest.getRestDetail.stdRestNm }}</q-toolbar-title>
@@ -28,14 +29,34 @@
             <q-icon size="18px" style="margin-right: 5px" name="room" />
             <span>{{ locationInfoRest.getRestDetail.svarAddr }}</span>
           </div>
+          <div v-if="locationInfoRest.getRestDetail.gudClssNm" class="q-px-md q-mt-sm" style="color: #333; font-size: 12px">
+            <q-icon size="18px" style="margin-right: 5px" name="import_export" />
+            <span>방향 : </span>
+            <span>{{ locationInfoRest.getRestDetail.gudClssNm }}</span>
+          </div>
           <div v-if="locationInfoRest.getRestDetail.conv.length > 0" class="q-px-md q-mt-sm" style="color: #333; font-size: 12px">
             <q-icon size="18px" style="margin-right: 5px" name="info" />
             <span>편의시설 : </span>
             <span v-for="{ psName, redId } in locationInfoRest.getRestDetail.conv" :key="redId">{{ psName }}, </span>
           </div>
-          <q-separator v-if="locationInfoRest.getRestDetail.brand.length > 0" spaced inset />
-          <h2 v-if="locationInfoRest.getRestDetail.brand.length > 0" class="q-mx-md" style="margin-top: 20px; margin-bottom: 10px; font-size: 22px; font-weight: bold">체인점</h2>
           <q-list>
+            <q-separator v-if="locationInfoRest.getRestDetail.gasStation.length > 0" spaced inset />
+            <h2 v-if="locationInfoRest.getRestDetail.gasStation.length > 0" class="q-mx-md" style="margin-top: 20px; margin-bottom: 10px; font-size: 22px; font-weight: bold">
+              {{ locationInfoRest.getRestDetail.gasStation[0].stdRestNm }}
+            </h2>
+            <q-item v-for="{ psName, psDesc, stime, etime, redId } in locationInfoRest.getRestDetail.gasStation" :key="redId">
+              <q-item-section>
+                <q-item-label>{{ psName }}</q-item-label>
+                <q-item-label caption lines="3">{{ psDesc }}</q-item-label>
+              </q-item-section>
+
+              <q-item-section v-if="stime" side top>
+                <q-item-label caption>{{ `${stime}~${etime}` }}</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-separator v-if="locationInfoRest.getRestDetail.brand.length > 0" spaced inset />
+            <h2 v-if="locationInfoRest.getRestDetail.brand.length > 0" class="q-mx-md" style="margin-top: 20px; margin-bottom: 10px; font-size: 22px; font-weight: bold">체인점</h2>
             <q-item v-for="{ brdName, brdDesc, stime, etime, redId } in locationInfoRest.getRestDetail.brand" :key="redId">
               <q-item-section>
                 <q-item-label>{{ brdName }}</q-item-label>
@@ -48,7 +69,6 @@
             </q-item>
 
             <q-separator v-if="locationInfoRest.getRestDetail.food.length > 0" spaced inset />
-
             <h2 v-if="locationInfoRest.getRestDetail.food.length > 0" class="q-mx-md" style="margin-top: 20px; margin-bottom: 10px; font-size: 22px; font-weight: bold">음식</h2>
             <q-item v-for="{ foodNm, redId } in locationInfoRest.getRestDetail.food" :key="redId">
               <q-item-section>
