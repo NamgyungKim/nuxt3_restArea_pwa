@@ -1,0 +1,45 @@
+// 색상
+$color-gray100: #d9d9d9;
+$color-main: #417ff2;
+
+/*반응형 화면 크기*/
+$lg: 1264px;
+$md: 960px;
+$sm: 600px;
+$sx: 425px;
+ 
+@mixin media ($size) {
+  @media (max-width: $size) {
+    @content;
+  }
+}
+
+
+// 말줄임
+@mixin ellipse {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+} 
+@mixin ellipsis_multi($n) {
+  display: -webkit-box;
+  -webkit-line-clamp: $n;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// 숨김
+.hidden {
+  position: absolute; /* position: absolute/fixed 에서만 clip 속성 작동 */
+  margin: -1px; /* 부트스트랩에선 안씀 */
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  white-space: nowrap;
+  overflow: hidden; /* overflow: visible 이면 clip 속성 작동 안됨 */
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%); 
+}
