@@ -3,6 +3,8 @@
     <div class="main_map">
       <div id="map" ref="map"></div>
     </div>
+    <Loading v-if="locationInfoRest.getLocationinfoRestUp.length === 0 && (filter.getFilterDirection === '0' || filter.getFilterDirection === '1')" text="데이터를 불러오는 중 입니다." />
+    <Loading v-if="locationInfoRest.getElecVehicChargingStarion.length === 0 && filter.getFilterDirection === '3'" text="전기차 데이터를 불러오는 중 입니다." />
   </Layout>
 </template>
 <script setup>
@@ -21,7 +23,7 @@ const level = ref(10),
   longitude = ref(127.040753546649),
   mapOverlay = ref('');
 
-const fn_clickMap = (mouseEvent) => {
+const fn_clickMap = () => {
   const overlayCard = document.querySelector('#map_overlay_card');
   if (overlayCard) {
     overlayCard.remove();
@@ -48,7 +50,6 @@ const fn_mapOverlay = ({ title, text, latlng }) => {
 
 // 마커클릭
 const fn_clickMark = (marker, item) => {
-  const { title, stdRestCd } = item;
   locationInfoRest.GET_locationInfo(item);
   selectedMarker.value = marker;
   const overlayCard = document.querySelector('#map_overlay_card');
@@ -60,7 +61,7 @@ const fn_clickMark = (marker, item) => {
   }
 };
 
-const fn_restPoi = () => {
+const fn_restPoi = async () => {
   let imageSize = new kakao.maps.Size(24, 35),
     markerImage = new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', imageSize),
     poiList = [];
@@ -69,38 +70,45 @@ const fn_restPoi = () => {
     case '0':
       imageSize = new kakao.maps.Size(24, 30);
       markerImage = new kakao.maps.MarkerImage(location.origin + '/_nuxt/assets/image/up_poi.png', imageSize);
-      poiList = locationInfoRest.getLocationinfoRestUp;
+      poiList = await locationInfoRest.getLocationinfoRestUp;
       break;
     case '1':
       imageSize = new kakao.maps.Size(24, 30);
       markerImage = new kakao.maps.MarkerImage(location.origin + '/_nuxt/assets/image/down_poi.png', imageSize);
-      poiList = locationInfoRest.getLocationinfoRestDown;
+      poiList = await locationInfoRest.getLocationinfoRestDown;
       break;
     case '2':
-      poiList = locationInfoRest.getLocationinfoRest;
+      poiList = await locationInfoRest.getLocationinfoRest;
+      break;
+    case '3':
+      imageSize = new kakao.maps.Size(24, 30);
+      markerImage = new kakao.maps.MarkerImage(location.origin + '/_nuxt/assets/image/elec_poi.png', imageSize);
+      poiList = await locationInfoRest.getElecVehicChargingStarion;
       break;
   }
-  locationInfoRest.getLocationinfoRest.forEach((item) => {
+
+  poiList.forEach((item) => {
     const marker = new kakao.maps.Marker({
       map: map.value, // 마커를 표시할 지도
       position: item.latlng, // 마커를 표시할 위치
-      title: item.title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+      title: item?.title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
       image: markerImage, // 마커 이미지
     });
-
+    if (filter.getFilterDirection === '3') return;
     kakao.maps.event.addListener(marker, 'click', () => fn_clickMark(marker, item));
   });
 };
 
 const kakaoMap = async () => {
   const mapContainer = document.getElementById('map');
+  mapContainer.innerHTML = '';
   const mapOption = {
     center: await new kakao.maps.LatLng(latitude.value, longitude.value),
     level: level.value,
   };
-  map.value = new kakao.maps.Map(mapContainer, mapOption);
+  map.value = await new kakao.maps.Map(mapContainer, mapOption);
 
-  fn_restPoi();
+  await fn_restPoi();
 
   kakao.maps.event.addListener(map.value, 'click', fn_clickMap);
 };
@@ -111,7 +119,9 @@ watch(filter, () => {
 
 onMounted(async () => {
   await locationInfoRest.GET_LocationinfoRest();
-  kakaoMap();
+  await kakaoMap();
+  locationInfoRest.GET_hiwaySvarInfoList();
+  locationInfoRest.GET_ElectricVehicleChargingStation();
 });
 </script>
 <style lang="scss" scoped>

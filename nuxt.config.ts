@@ -92,9 +92,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      VUE_KAKAO_MAP_KIE: process.env.VUE_KAKAO_MAP_KIE,
-      apiBaseUrl: process.env.NUXT_PUBLIC_BASE_URL,
-      cryptoKey: process.env.NUXT_APP_KEY,
+      NUXT_PUBLIC_OPENAPI_URL: process.env.NUXT_PUBLIC_OPENAPI_URL,
+      NUXT_PUBLIC_EV_URL: process.env.NUXT_PUBLIC_EV_URL,
     },
   },
 });

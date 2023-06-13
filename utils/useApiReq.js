@@ -3,7 +3,7 @@ import { useFetch, useRuntimeConfig } from '#app';
 export default async (apiUrl, opts) => {
   const config = await useRuntimeConfig();
   return useFetch(apiUrl, {
-    baseURL: 'http://data.ex.co.kr/openapi',
+    baseURL: `http://data.ex.co.kr/openapi`,
     method: opts?.method,
     params: opts?.params,
     body: opts?.body,

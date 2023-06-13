@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import useApiReq from '~/composables/useApiReq';
 
 export const useFilter = defineStore('filter', {
   state: () => ({
