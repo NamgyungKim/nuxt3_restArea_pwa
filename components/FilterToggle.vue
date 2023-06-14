@@ -15,8 +15,8 @@
       rounded
       :options="[
         { label: 'All', value: '2' },
-        { label: '상향', value: '0' },
-        { label: '하향', value: '1' },
+        { label: '상행', value: '0' },
+        { label: '하행', value: '1' },
       ]"
     />
   </div>
@@ -24,7 +24,9 @@
 
 <script setup>
 import { useFilter } from '~/stores/Filter';
+import { useLocationinfoRest } from '~/stores/locationinfoRest';
 
+const locationInfoRest = useLocationinfoRest();
 const filter = useFilter();
 const direction = ref('2');
 const option = ref('rest');
@@ -33,6 +35,7 @@ watch(direction, () => {
   filter.SET_filterDirection(direction.value);
 });
 watch(option, () => {
+  locationInfoRest.REMOVE_locationInfo();
   if (option.value === 'elec') {
     direction.value = '3';
   } else {

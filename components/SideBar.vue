@@ -56,7 +56,6 @@
                     </q-item-section>
                   </q-item>
 
-                  <q-separator v-if="locationInfoRest.getRestDetail.food.length > 0" spaced inset />
                   <h2 v-if="locationInfoRest.getRestDetail.food.length > 0" class="q-mx-md" style="margin-top: 20px; margin-bottom: 10px; font-size: 22px; font-weight: bold">음식</h2>
                   <q-item v-for="{ foodNm, redId } in locationInfoRest.getRestDetail.food" :key="redId">
                     <q-item-section>

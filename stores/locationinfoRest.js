@@ -84,7 +84,7 @@ export const useLocationinfoRest = defineStore('locationinfoRest', {
       formData.set('orgme', 'Y');
       formData.set('orgetc', 'N');
       try {
-        const { data } = await useApiEv('/chlist', {
+        const { data } = await useApiEv('/portal/monitor/chlist', {
           method: 'post',
           body: formData,
         });
@@ -120,7 +120,6 @@ export const useLocationinfoRest = defineStore('locationinfoRest', {
         this.isLoadingElecStation = false;
       } catch (err) {
         console.error(err);
-        alert('요청 실패');
       }
     },
     async GET_locationInfo(item) {

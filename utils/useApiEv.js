@@ -3,7 +3,7 @@ import { useFetch, useRuntimeConfig } from '#app';
 export default async (apiUrl, opts) => {
   const config = await useRuntimeConfig();
   return useFetch(apiUrl, {
-    baseURL: 'https://www.ev.or.kr/portal/monitor',
+    baseURL: 'http://localhost:3000',
     method: opts?.method,
     params: opts?.params,
     body: opts?.body,

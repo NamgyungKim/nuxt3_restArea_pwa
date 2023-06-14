@@ -13,7 +13,7 @@ export default defineNuxtConfig({
     head: {
       charset: 'utf-8',
       // viewport: 'width=500, initial-scale=1',
-      title: 'Nuxt3 프레임워크',
+      title: '휴게소 정보',
       meta: [{ name: 'Nuxt3, Pinia, TypeScript 로 구성된 프레임워크', content: '개발을 위한 기본 프레임워크' }],
       script: [
         { type: 'text/javascript', src: 'https://www.gstatic.com/charts/loader.js' },
@@ -57,6 +57,14 @@ export default defineNuxtConfig({
         negative: '#C10015',
         info: '#31CCEC',
         warning: '#F2C037',
+      },
+    },
+    server: {
+      proxy: {
+        '/portal/monitor/chlist': {
+          target: 'https://www.ev.or.kr',
+          changeOrigin: true,
+        },
       },
     },
   },

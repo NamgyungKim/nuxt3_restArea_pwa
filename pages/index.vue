@@ -16,7 +16,7 @@ import { useFilter } from '~/stores/Filter';
 
 const locationInfoRest = useLocationinfoRest();
 const filter = useFilter();
-const level = ref(10),
+const level = ref(3),
   map = ref(''),
   selectedMarker = ref(null),
   latitude = ref(37.5176947984203),
@@ -47,6 +47,43 @@ const fn_mapOverlay = ({ title, text, latlng }) => {
   });
   mapCustomOverlay.setMap(map.value);
 };
+const fn_elecStateOverlay = ({ title, sid, ut, state, latlng }) => {
+  mapOverlay.value = `<div id="map_overlay_card">
+        <div class="overlay_info">
+            <button type="button"><strong>${title}</strong></button>
+            <div class="desc">
+                <span>${ut}</span>
+                <p>사용 현황</p>
+                <ul>`;
+  state.forEach(({ po, cst }) => {
+    let tag = '';
+    if (cst === 2) {
+      tag = ` <span class="can_use">사용가능</span>`;
+    } else if (cst === 3) {
+      tag = `<span class="using">사용중</span>`;
+    } else {
+      tag = `<span class="not_use">사용불가</span>`;
+    }
+    mapOverlay.value += `
+      <li>
+        <span>${po} kW</span>
+        ${tag}
+      </li>
+    `;
+  });
+  mapOverlay.value += `</ul>
+            </div>
+        </div>
+    </div>`;
+
+  const mapCustomOverlay = new kakao.maps.CustomOverlay({
+    position: latlng,
+    content: mapOverlay.value,
+    xAnchor: 0.5, // 커스텀 오버레이의 x축 위치입니다. 1에 가까울수록 왼쪽에 위치합니다. 기본값은 0.5 입니다
+    yAnchor: 1.3, // 커스텀 오버레이의 y축 위치입니다. 1에 가까울수록 위쪽에 위치합니다. 기본값은 0.5 입니다
+  });
+  mapCustomOverlay.setMap(map.value);
+};
 
 // 마커클릭
 const fn_clickMark = (marker, item) => {
@@ -58,6 +95,17 @@ const fn_clickMark = (marker, item) => {
     fn_mapOverlay(item);
   } else {
     fn_mapOverlay(item);
+  }
+};
+
+const fn_clickElecState = (marker, item) => {
+  selectedMarker.value = marker;
+  const overlayCard = document.querySelector('#map_overlay_card');
+  if (overlayCard) {
+    overlayCard.remove();
+    fn_elecStateOverlay(item);
+  } else {
+    fn_elecStateOverlay(item);
   }
 };
 
@@ -94,8 +142,12 @@ const fn_restPoi = async () => {
       title: item?.title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
       image: markerImage, // 마커 이미지
     });
-    if (filter.getFilterDirection === '3') return;
-    kakao.maps.event.addListener(marker, 'click', () => fn_clickMark(marker, item));
+
+    if (filter.getFilterDirection === '3') {
+      kakao.maps.event.addListener(marker, 'click', () => fn_clickElecState(marker, item));
+    } else {
+      kakao.maps.event.addListener(marker, 'click', () => fn_clickMark(marker, item));
+    }
   });
 };
 
@@ -118,6 +170,10 @@ watch(filter, () => {
 });
 
 onMounted(async () => {
+  navigator.geolocation.getCurrentPosition((position) => {
+    latitude.value = position.coords.latitude;
+    longitude.value = position.coords.longitude;
+  });
   await locationInfoRest.GET_LocationinfoRest();
   await kakaoMap();
   locationInfoRest.GET_hiwaySvarInfoList();

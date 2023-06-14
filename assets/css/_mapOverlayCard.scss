@@ -1,6 +1,6 @@
 #map_overlay_card {
   //visibility: hidden;
-  &.show{
+  &.show {
     visibility: visible;
   }
   .overlay_info {
@@ -34,7 +34,36 @@
     padding: 14px;
     position: relative;
     min-width: 190px;
-    height: 56px;
+  }
+  p{
+    margin: 15px 0 5px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+  }
+  ul {
+    margin: 5px 0 15px;
+    line-height: 1.2;
+    border-bottom: 1px solid #ccc;
+    li {
+      display: flex;
+      justify-content: space-between;
+      margin: 5px 0;
+    }
+    .not_use,
+    .can_use,
+    .using {
+      padding: 0 8px;
+      border-radius: 10px;
+    }
+    .not_use {
+      background: #ddd;
+    }
+    .can_use {
+      background: #21ba45;
+    }
+    .using {
+      background: #f2c037;
+    }
   }
   .overlay_info img {
     vertical-align: top;
@@ -47,6 +76,6 @@
     bottom: -12px;
     width: 22px;
     height: 12px;
-    background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png') no-repeat 0 bottom;
+    background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png') no-repeat 0 bottom;
   }
 }
