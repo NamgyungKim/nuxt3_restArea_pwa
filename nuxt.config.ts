@@ -26,12 +26,49 @@ export default defineNuxtConfig({
     },
   },
   // modules
-  modules: ['@pinia/nuxt', '@nuxtjs/i18n', 'nuxt-quasar-ui'],
+  modules: ['@pinia/nuxt', '@nuxtjs/i18n', 'nuxt-quasar-ui', '@vite-pwa/nuxt'],
 
   build: {
     parallel: true,
     cache: true,
     hardSource: true,
+  },
+
+  pwa: {
+    manifest: {
+      name: '휴게소 정보',
+      short_name: '휴게소 정보',
+      description: '휴게소 정보',
+      icons: [
+        {
+          src: 'icons/icon_64x64.png',
+          sizes: '64x64',
+          type: 'image/png',
+        },
+        {
+          src: 'icons/icon_144x144.png',
+          sizes: '144x144',
+          type: 'image/png',
+        },
+        {
+          src: 'icons/icon_192x192.png',
+          sizes: '192x192',
+          type: 'image/png',
+        },
+        {
+          src: 'icons/icon_512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+        },
+      ],
+    },
+    workbox: {
+      navigateFallback: '/',
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module',
+    },
   },
 
   css: ['mdi/css/materialdesignicons.min.css', '~/assets/css/main.scss'],
